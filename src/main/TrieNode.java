@@ -1,3 +1,5 @@
+package main;
+
 import java.util.HashMap;
 
 class TrieNode {
@@ -29,5 +31,4 @@ class TrieNode {
         TrieNode node = find(word, 0);
         return node != null && node.wordCount > 0;
     }
-
 }
