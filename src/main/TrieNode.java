@@ -31,4 +31,12 @@ class TrieNode {
         TrieNode node = find(word, 0);
         return node != null && node.wordCount > 0;
     }
+
+    public int getVocabSize() {
+        int vocabSize = wordCount > 0 ? 1 : 0;
+        for (TrieNode childNode : children.values()) {
+            vocabSize += childNode.getVocabSize();
+        }
+        return vocabSize;
+    }
 }

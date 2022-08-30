@@ -1,13 +1,12 @@
 package main;
 
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         System.out.println("Hello world!");
         Trie trie = new Trie();
-        System.out.println(trie.contains("Hello"));
-        trie.add("Hello");
-        System.out.println(trie.contains("Hello"));
-        System.out.println(trie.contains("hello"));
-        System.out.println(trie.contains("he"));
+        trie.build("data/word_frequency_simpsons.txt");
+        System.out.println(trie.getVocabSize());
     }
 }
