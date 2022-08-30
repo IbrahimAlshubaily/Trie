@@ -21,12 +21,11 @@ class TrieTest {
         assertFalse(trie.contains("helloo"));
     }
 
-
     @org.junit.jupiter.api.Test
     void testLineParser() {
         LineParser parsedLine = LineParser.parseLine("1       HeLLo        (99)");
-        assertEquals("hello", parsedLine.word);
-        assertEquals(99, parsedLine.wordCount);
+        assertEquals("hello", parsedLine.getWord());
+        assertEquals(99, parsedLine.getWordCount());
     }
 
     @org.junit.jupiter.api.Test
@@ -34,6 +33,12 @@ class TrieTest {
         Trie trie = new Trie();
         trie.build("data/word_frequency_simpsons.txt");
         assertEquals(trie.getVocabSize(), 5000);
+    }
+    @org.junit.jupiter.api.Test
+    void testAutoCorrect() throws IOException {
+        Trie trie = new Trie();
+        trie.build("data/word_frequency_simpsons.txt");
+        assertTrue(trie.autoCorrect("Condetion").contains("condition"));
     }
 
 }

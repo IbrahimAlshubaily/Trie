@@ -2,7 +2,7 @@ package main;
 
 import java.util.HashMap;
 
-class TrieNode {
+class TrieNode implements Comparable<TrieNode>{
     private int wordCount = 0;
     private final HashMap<Character, TrieNode> children = new HashMap<>();
     void add(String word, int index, int wordCount){
@@ -38,5 +38,10 @@ class TrieNode {
             vocabSize += childNode.getVocabSize();
         }
         return vocabSize;
+    }
+
+    @Override
+    public int compareTo(TrieNode other) {
+        return wordCount - other.wordCount;
     }
 }

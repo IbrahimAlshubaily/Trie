@@ -1,11 +1,18 @@
 package main;
 
 public class LineParser{
-    public String word;
-    public int wordCount;
+    private final String word;
+    private final int wordCount;
     public LineParser(String word, int wordCount){
         this.word = word.toLowerCase();
         this.wordCount = wordCount;
+    }
+
+    public String getWord(){
+        return word;
+    }
+    public int getWordCount(){
+        return wordCount;
     }
     public static LineParser parseLine(String line){
         String [] parsedLine = line.trim().replaceAll(" +", " ").split(" ");
