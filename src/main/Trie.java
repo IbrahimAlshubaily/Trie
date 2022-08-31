@@ -6,9 +6,10 @@ import java.util.stream.Collectors;
 
 public class Trie {
 
-    private final TrieNode root = new TrieNode();
     private static final int AUTO_CORRECT_SIZE = 3;
     private final static char[] ALPHABET = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+    private final TrieNode root = new TrieNode();
+
     public void add(String word, int wordCount){
         this.root.add(word.toLowerCase(), 0, wordCount);
     }
@@ -70,7 +71,8 @@ public class Trie {
 
     private Set<String> selectTopCorrections(HashMap<TrieNode, String> corrections) {
         return corrections.entrySet().stream().
-                                        sorted(Map.Entry.comparingByKey()).
+                                        //Sort by wordCount in descending order
+                                        sorted(Map.Entry.comparingByKey(Comparator.reverseOrder())).
                                         limit(AUTO_CORRECT_SIZE).
                                         map(Map.Entry::getValue).
                                         collect(Collectors.toSet());
