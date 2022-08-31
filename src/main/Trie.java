@@ -1,27 +1,30 @@
 package main;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Trie {
-
-    private static final int AUTO_CORRECT_SIZE = 3;
-    private final static char[] ALPHABET = "abcdefghijklmnopqrstuvwxyz".toCharArray();
     private final TrieNode root = new TrieNode();
-
     public void add(String word, int wordCount){
-        this.root.add(word.toLowerCase(), 0, wordCount);
+        root.add(word.toLowerCase(), 0, wordCount);
     }
     public void add(String word){
         add(word, 1);
     }
+    public int getWordCount(String word){
+        if (root.contains(word)){
+            return root.find(word, 0).getWordCount();
+        }
+        return 0;
+    }
     public boolean contains(String word){
-        return this.root.contains(word.toLowerCase());
+        return root.contains(word.toLowerCase());
     }
-    public int getVocabSize(){
-        return root.getVocabSize();
-    }
+    //public int getVocabSize(){
+    //    return root.getVocabSize();
+    //}
     public void build(String filePath) throws IOException {
         File vocab = new File(filePath);
         FileReader fileReader = new FileReader(vocab);
@@ -29,53 +32,20 @@ public class Trie {
         bufferedReader.readLine(); //discard header
 
         String line;
-        LineParser parsedLine;
+        ParsedLine parsedLine;
         while ((line = bufferedReader.readLine()) != null) {
-            parsedLine = LineParser.parseLine(line);
+            parsedLine = ParsedLine.parseLine(line);
             add(parsedLine.getWord(), parsedLine.getWordCount());
         }
         fileReader.close();
+        root.initPrefixCount();
     }
-
-    public Set<String> autoCorrect(String word){
-        HashMap<TrieNode, String> corrections = getCorrections(word.toLowerCase());
-        return selectTopCorrections(corrections);
-    }
-
-
-    private HashMap<TrieNode, String> getCorrections(String word) {
-        HashMap<TrieNode, String> result = new HashMap<>();
-        String currWord;
-        for (int i = 0; i < word.length(); i++){
-            for (char c : ALPHABET){
-                //INSERT
-                currWord = word.substring(0,i) + c + word.substring(i);
-                addWord(currWord, result);
-                //REPLACE
-                currWord = word.substring(0,i) + c + word.substring(i+1);
-                addWord(currWord, result);
-            }
-            //REMOVE
-            currWord = word.substring(0,i) + word.substring(i+1);
-            addWord(currWord, result);
+    public String autoComplete(String prefix){
+        if (root.find(prefix, 0) != null){
+            return root.find(prefix.toLowerCase(), 0).getCompletions(prefix.toLowerCase());
         }
-        return result;
-    }
-
-    private void addWord(String word, HashMap<TrieNode, String> result) {
-        TrieNode node = root.find(word, 0);
-        if (node != null){
-            result.put(node, word);
-        }
-    }
-
-    private Set<String> selectTopCorrections(HashMap<TrieNode, String> corrections) {
-        return corrections.entrySet().stream().
-                                        //Sort by wordCount in descending order
-                                        sorted(Map.Entry.comparingByKey(Comparator.reverseOrder())).
-                                        limit(AUTO_CORRECT_SIZE).
-                                        map(Map.Entry::getValue).
-                                        collect(Collectors.toSet());
+        return "<OOV>";
     }
 
 }
+
