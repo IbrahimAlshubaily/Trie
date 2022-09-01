@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Trie {
     private final TrieNode root = new TrieNode();
@@ -22,9 +24,7 @@ public class Trie {
     public boolean contains(String word){
         return root.contains(word.toLowerCase());
     }
-    //public int getVocabSize(){
-    //    return root.getVocabSize();
-    //}
+
     public void build(String filePath) throws IOException {
         File vocab = new File(filePath);
         FileReader fileReader = new FileReader(vocab);
@@ -40,11 +40,11 @@ public class Trie {
         fileReader.close();
         root.initPrefixCount();
     }
-    public String autoComplete(String prefix){
+    public Set<String> autoComplete(String prefix){
         if (root.find(prefix, 0) != null){
-            return root.find(prefix.toLowerCase(), 0).getCompletions(prefix.toLowerCase());
+            return root.find(prefix.toLowerCase(), 0).autoComplete(prefix.toLowerCase());
         }
-        return "<OOV>";
+        return new HashSet<>(){};
     }
 
 }

@@ -1,11 +1,11 @@
 package main;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class TrieNode{
+    private static final int AUTO_COMPLETE_SIZE = 3;
     private int wordCount = 0;
-    private int prefixWordCount = 0;
     private final HashMap<Character, TrieNode> children = new HashMap<>();
     void add(String word, int index, int wordCount){
         if (index == word.length()){
@@ -34,7 +34,7 @@ class TrieNode{
         return node != null && node.wordCount > 0;
     }
     int initPrefixCount() {
-        prefixWordCount = wordCount;
+        int prefixWordCount = wordCount;
         for (TrieNode childNode : children.values()) {
             prefixWordCount = Math.max(prefixWordCount, childNode.initPrefixCount());
         }
@@ -43,23 +43,25 @@ class TrieNode{
     int getWordCount() {
         return wordCount;
     }
-
-    public String getCompletions(String prefix) {
-        
-        char nextChar = 0;
-        TrieNode nextNode = null;
-        int maxPrefixCount = 0;
+    public Set<String> autoComplete(String word) {
+        return selectTopCandidates(getCompletions(word));
+    }
+    public HashMap<String, Integer> getCompletions(String prefix) {
+        HashMap<String, Integer> candidates = new HashMap<>();
+        if (wordCount > 0){
+            candidates.put(prefix, wordCount);
+        }
         for (Map.Entry<Character, TrieNode> child: children.entrySet()){
-            if (child.getValue().prefixWordCount > maxPrefixCount){
-                nextChar = child.getKey();
-                nextNode = child.getValue();
-                maxPrefixCount = nextNode.prefixWordCount;
-            }
+            candidates.putAll(child.getValue().getCompletions(prefix+child.getKey()));
         }
-
-        if (nextNode != null && maxPrefixCount > this.wordCount){
-            return nextNode.getCompletions(prefix+nextChar);
-        }
-        return prefix;
+        return candidates;
+    }
+    private static Set<String> selectTopCandidates(HashMap<String, Integer> candidates) {
+        return candidates.entrySet().stream().
+                //Sort by wordCount in descending order
+                sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
+                limit(AUTO_COMPLETE_SIZE).
+                map(Map.Entry::getKey).
+                collect(Collectors.toSet());
     }
 }

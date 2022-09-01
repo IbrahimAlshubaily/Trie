@@ -35,13 +35,13 @@ class TrieTest {
     @Test
     void testAutoComplete() throws IOException {
         trie.build("data/word_frequency_simpsons.txt");
-        assertEquals("the", trie.autoComplete("t"));
-        assertEquals("you", trie.autoComplete("y"));
-        assertEquals("and", trie.autoComplete("an"));
-        assertEquals("we", trie.autoComplete("w"));
-        assertEquals("what", trie.autoComplete("wh"));
-        assertEquals("be", trie.autoComplete("b"));
-        assertEquals("but", trie.autoComplete("bu"));
+        assertTrue(trie.autoComplete("t").contains("the"));
+        assertTrue(trie.autoComplete("y").contains("you"));
+        assertTrue(trie.autoComplete("an").contains("and"));
+        assertTrue(trie.autoComplete("w").contains("we"));
+        assertTrue(trie.autoComplete("wh").contains("what"));
+        assertTrue(trie.autoComplete("b").contains("be"));
+        assertTrue(trie.autoComplete("bu").contains("but"));
     }
     @Test
     void testAutoCorrect() throws IOException {
