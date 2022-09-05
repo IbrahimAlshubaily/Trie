@@ -39,10 +39,11 @@ public class Trie {
         }
         fileReader.close();
         root.initPrefixCount();
+        root.initCompletions("");
     }
     public Set<String> autoComplete(String prefix){
         if (root.find(prefix, 0) != null){
-            return root.find(prefix.toLowerCase(), 0).autoComplete(prefix.toLowerCase());
+            return root.find(prefix.toLowerCase(), 0).autoComplete();
         }
         return new HashSet<>(){};
     }

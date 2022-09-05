@@ -1,12 +1,12 @@
 package main;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 class TrieNode{
-    private static final int AUTO_COMPLETE_SIZE = 3;
+    private static final int AUTO_COMPLETE_SIZE = 5;
     private int wordCount = 0;
     private final HashMap<Character, TrieNode> children = new HashMap<>();
+    private HashMap<String, Integer> topCompletions = new HashMap<>();
+
     void add(String word, int index, int wordCount){
         if (index == word.length()){
             this.wordCount += wordCount;
@@ -43,25 +43,18 @@ class TrieNode{
     int getWordCount() {
         return wordCount;
     }
-    public Set<String> autoComplete(String word) {
-        return selectTopCandidates(getCompletions(word));
-    }
-    public HashMap<String, Integer> getCompletions(String prefix) {
-        HashMap<String, Integer> candidates = new HashMap<>();
+
+    HashMap<String, Integer> initCompletions(String prefix){
         if (wordCount > 0){
-            candidates.put(prefix, wordCount);
+            topCompletions.put(prefix, wordCount);
         }
         for (Map.Entry<Character, TrieNode> child: children.entrySet()){
-            candidates.putAll(child.getValue().getCompletions(prefix+child.getKey()));
+            topCompletions.putAll(child.getValue().initCompletions(prefix+child.getKey()));
         }
-        return candidates;
+        topCompletions = Utils.selectTopK(topCompletions, AUTO_COMPLETE_SIZE);
+        return topCompletions;
     }
-    private static Set<String> selectTopCandidates(HashMap<String, Integer> candidates) {
-        return candidates.entrySet().stream().
-                //Sort by wordCount in descending order
-                sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
-                limit(AUTO_COMPLETE_SIZE).
-                map(Map.Entry::getKey).
-                collect(Collectors.toSet());
+    public Set<String> autoComplete() {
+        return topCompletions.keySet();
     }
 }

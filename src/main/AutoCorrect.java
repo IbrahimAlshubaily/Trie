@@ -1,23 +1,21 @@
 package main;
 
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class AutoCorrect {
     private static final int AUTO_CORRECT_SIZE = 3;
     private static final char[] ALPHABET = "abcdefghijklmnopqrstuvwxyz".toCharArray();
     static Set<String> autoCorrect(String word, Trie trie){
         HashMap<String, Integer> corrections = getCorrections(word.toLowerCase(), trie);
-        return selectTopCorrections(corrections);
+        return Utils.selectTopK(corrections, AUTO_CORRECT_SIZE).keySet();
     }
     private static HashMap<String, Integer> getCorrections(String word, Trie trie) {
         HashMap<String, Integer> result = new HashMap<>();
         String currWord;
         for (int i = 0; i < word.length(); i++){
             for (char c : ALPHABET){
+
                 //INSERT
                 currWord = word.substring(0,i) + c + word.substring(i);
                 addWord(currWord, trie, result);
@@ -41,12 +39,5 @@ public class AutoCorrect {
             result.put(word, trie.getWordCount(word));
         }
     }
-    private static Set<String> selectTopCorrections(HashMap<String, Integer> corrections) {
-        return corrections.entrySet().stream().
-                //Sort by wordCount in descending order
-                sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).
-                limit(AUTO_CORRECT_SIZE).
-                map(Map.Entry::getKey).
-                collect(Collectors.toSet());
-    }
+
 }
