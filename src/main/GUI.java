@@ -10,11 +10,10 @@ public class GUI {
 
         Trie trie = new Trie();
         trie.build("data/word_frequency_simpsons.txt");
-        //Create and set up the window.
+
         JFrame frame = new JFrame("TextEditorSwing");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Add the ubiquitous "Hello World" label.
         JLabel label = new JLabel("Text Editor");
         frame.getContentPane().add(label);
 
