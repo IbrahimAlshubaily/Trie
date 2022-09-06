@@ -42,7 +42,7 @@ public class Trie {
         root.initCompletions("");
     }
     public Set<String> autoComplete(String prefix){
-        if (root.find(prefix, 0) != null){
+        if (root.find(prefix.toLowerCase(), 0) != null){
             return root.find(prefix.toLowerCase(), 0).autoComplete();
         }
         return new HashSet<>(){};
