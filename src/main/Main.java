@@ -7,7 +7,7 @@ public class Main {
         Trie trie = new Trie();
         trie.build("data/word_frequency_simpsons.txt");
         System.out.println(AutoCorrect.autoCorrect("wha", trie));
-        for (String completion :  trie.autoComplete("t")){
+        for (String completion :  trie.autoComplete("T")){
             System.out.println(completion);
         }
     }
